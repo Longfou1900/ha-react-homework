@@ -183,3 +183,12 @@ sudo systemctl restart haproxy
 
 Then try logging in again with admin / vagrant.
 Important: If lb-02 also runs HAProxy, update its configuration too so both load balancers use the same stats credentials. For a real production environment, use a stronger password rather than vagrant.
+
+
+========================
+<!-- for deploy  -->
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ vagrant ssh web-01 -c 'bash /vagrant/scripts/deploy-react.sh'
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ vagrant ssh web-02 -c 'bash /vagrant/scripts/deploy-react.sh'

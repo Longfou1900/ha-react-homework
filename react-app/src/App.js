@@ -22,6 +22,16 @@ function App() {
     fetchServerInfo();
   }, []);
 
+  // Update the browser tab title dynamically whenever serverInfo.server updates
+  useEffect(() => {
+    if (serverInfo.server && serverInfo.server !== 'LOADING...') {
+      // You can format it however you like: e.g., "HA | web-01" or just "web-01"
+      document.title = `HA | ${serverInfo.server}`;
+    } else {
+      document.title = 'HA React App (Loading...)';
+    }
+  }, [serverInfo.server]);
+
   // Automatically send one request every second when enabled.
   useEffect(() => {
     if (!auto) return;

@@ -1,0 +1,23 @@
+2. Deploy on web-02 (192.168.56.21)
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ vagrant ssh web-02
+vagrant@web-02:~$ cd /vagrant/scripts/
+vagrant@web-02:/vagrant/scripts$ sudo ./setup-web.sh 
+[Tue Oct 13 08:43:48 AM UTC 2026] Setup completed successfully.
+vagrant@web-02:/vagrant/scripts$ sudo ./deploy-react.sh 
+[Tue Oct 13 08:45:05 AM UTC 2026] Starting React application build and deployment...
+./deploy-react.sh: line 12: cd: /home/vagrant/react-app: No such file or directory
+vagrant@web-02:/vagrant/scripts$ mkdir -p /home/vagrant/react-app
+tar --exclude=node_modules -C /vagrant/react-app -cf - . | tar -C /home/vagrant/react-app -xf -
+sudo chown -R vagrant:vagrant /home/vagrant/react-app
+vagrant@web-02:/vagrant/scripts$ sudo ./deploy-react.sh 
+[Tue Oct 13 09:01:42 AM UTC 2026] Deployment finished successfully.
+vagrant@web-02:/vagrant/scripts$ exit
+logout
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl http://192.168.56.20:3000/health
+curl http://192.168.56.21:3000/health
+{"status":"UP","server":"WEB-01"}{"status":"UP","server":"WEB-02"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab

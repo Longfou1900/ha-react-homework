@@ -1,0 +1,74 @@
+1. Deploy on web-01 (192.168.56.20)
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ vagrant up
+$ vagrant status
+$ vagrant ssh web-01
+vagrant@web-01:~$ cd /vagrant/scripts
+vagrant@web-01:/vagrant/scripts$ sudo ./setup-web.sh
+vagrant@web-01:/vagrant/scripts$ cd /vagrant/react-app
+vagrant@web-01:/vagrant/react-app$ mkdir -p public src
+vagrant@web-01:/vagrant/react-app$ nano public/index.html
+vagrant@web-01:/vagrant/react-app$ nano src/index.js
+vagrant@web-01:/vagrant/react-app$ ls -l public/index.html src/index.js src/App.js
+vagrant@web-01:/vagrant/react-app$ mkdir -p /home/vagrant/react-app/public
+vagrant@web-01:/vagrant/react-app$ cp /vagrant/react-app/public/index.html /home/vagrant/react-app/public/index.html
+vagrant@web-01:/vagrant/react-app$ cp /vagrant/react-app/src/index.js /home/vagrant/react-app/src/index.js
+vagrant@web-01:/vagrant/react-app$ ls -l /home/vagrant/react-app/public/index.html
+vagrant@web-01:/vagrant/react-app$ cd /home/vagrant/react-app
+vagrant@web-01:~/react-app$ npm run build
+vagrant@web-01:~/react-app$ sudo chown -R vagrant:vagrant /home/vagrant/react-app
+vagrant@web-01:~/react-app$ npm run build
+vagrant@web-01:~/react-app$ cd /vagrant/scripts/
+vagrant@web-01:/vagrant/scripts$ sudo ./deploy-react.sh 
+vagrant@web-01:/vagrant/scripts$ sudo nano /etc/systemd/system/react-app.service
+vagrant@web-01:/vagrant/scripts$ sudo systemctl cat react-app
+[Unit]
+Description=React.js Application served via Node.js/Express
+After=network.target
+
+[Service]
+Type=simple
+#User=ubuntu
+#WorkingDirectory=/home/ubuntu/ha-react-homework/react-app
+User=vagrant
+Group=vagrant
+WorkingDirectory=/home/vagrant/react-app
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+#StandardOutput=syslog
+#StandardError=syslog
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=react-app
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+[Install]
+WantedBy=multi-user.target
+
+vagrant@web-01:/vagrant/scripts$ sudo systemctl stop react-app
+sudo systemctl daemon-reload
+sudo systemctl reset-failed react-app
+sudo systemctl enable --now react-app
+vagrant@web-01:/vagrant/scripts$ curl http://localhost:3000/health
+{"status":"UP","server":"WEB-01"}
+
+
+
+
+=============================================
+if update anything run this for reload app
+=============================================
+
+cd /home/vagrant/react-app
+sudo chown -R vagrant:vagrant build
+npm run build
+
+-----------------------------------------------
+If the build succeeds, restart the application:
+-----------------------------------------------
+
+sudo systemctl restart react-app
+sudo systemctl status react-app --no-pager
