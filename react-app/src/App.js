@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 function App() {
   const [serverInfo, setServerInfo] = useState({ server: 'LOADING...', timestamp: '' });
   const [history, setHistory] = useState([]);
+  const [auto, setAuto] = useState(false);
 
   const fetchServerInfo = () => {
     fetch('/api/info')
@@ -21,6 +22,17 @@ function App() {
     fetchServerInfo();
   }, []);
 
+  // Automatically send one request every second when enabled.
+  useEffect(() => {
+    if (!auto) return;
+
+    const intervalId = setInterval(() => {
+      fetchServerInfo();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [auto]);
+
   const isWeb01 = serverInfo.server.includes('WEB-01');
 
   return (
@@ -31,7 +43,7 @@ function App() {
       </header>
 
       <div style={{
-        background: isWeb01 ? '#3182ce' : '#38a169',
+        background: isWeb01 ? '#f64702' : '#00ff62',
         color: 'white',
         padding: '30px',
         borderRadius: '8px',
@@ -58,6 +70,25 @@ function App() {
           >
             Send request
           </button>
+
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              color: '#4a5568',
+              fontSize: '0.9rem',
+              cursor: 'pointer'
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={auto}
+              onChange={(event) => setAuto(event.target.checked)}
+            />
+            Auto (1/s)
+          </label>
+
           <button
             onClick={() => setHistory([])}
             style={{ background: '#e2e8f0', color: '#2d3748', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer' }}

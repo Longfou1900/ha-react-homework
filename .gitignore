@@ -1,0 +1,12 @@
+# Ignore node_modules anywhere in the repository
+node_modules/
+
+# Ignore build artifacts anywhere
+build/
+
+# Ignore Vagrant local files
+.vagrant/
+
+# environment files (optional but recommended standard practice)
+.env
+.DS_Store

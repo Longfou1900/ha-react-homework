@@ -1,0 +1,135 @@
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ git init
+Initialized empty Git repository in D:/ISTAD/devOps-lab/.git/
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (master)
+$ git add .
+warning: in the working copy of '.vagrant/machines/lb-01/virtualbox/private_key', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.vagrant/machines/lb-02/virtualbox/private_key', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.vagrant/machines/web-01/virtualbox/private_key', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.vagrant/machines/web-02/virtualbox/private_key', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.vagrant/rgloader/loader.rb', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'react-app/public/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'react-app/src/index.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/check-health.sh', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/deploy-react.sh', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/server-report.sh', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/service-manager.sh', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/setup-web.sh', LF will be replaced by CRLF the next time Git touches it
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (master)
+$ git commit -m "wip: save project haproxy 4 machines"
+[master (root-commit) 3b01363] wip: save project haproxy 4 machines
+ 91 files changed, 4546 insertions(+)
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/action_cloud_init
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/action_provision
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/action_set_name
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/box_meta
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/creator_uid
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/disk_meta
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/id
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/index_uuid
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/private_key
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/synced_folders
+ create mode 100644 .vagrant/machines/lb-01/virtualbox/vagrant_cwd
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/action_cloud_init
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/action_provision
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/action_set_name
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/box_meta
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/creator_uid
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/disk_meta
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/id
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/index_uuid
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/private_key
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/synced_folders
+ create mode 100644 .vagrant/machines/lb-02/virtualbox/vagrant_cwd
+ create mode 100644 .vagrant/machines/web-01/virtualbox/action_cloud_init
+ create mode 100644 .vagrant/machines/web-01/virtualbox/action_provision
+ create mode 100644 .vagrant/machines/web-01/virtualbox/action_set_name
+ create mode 100644 .vagrant/machines/web-01/virtualbox/box_meta
+ create mode 100644 .vagrant/machines/web-01/virtualbox/creator_uid
+ create mode 100644 .vagrant/machines/web-01/virtualbox/disk_meta
+ create mode 100644 .vagrant/machines/web-01/virtualbox/id
+ create mode 100644 .vagrant/machines/web-01/virtualbox/index_uuid
+ create mode 100644 .vagrant/machines/web-01/virtualbox/private_key
+ create mode 100644 .vagrant/machines/web-01/virtualbox/synced_folders
+ create mode 100644 .vagrant/machines/web-01/virtualbox/vagrant_cwd
+ create mode 100644 .vagrant/machines/web-02/virtualbox/action_cloud_init
+ create mode 100644 .vagrant/machines/web-02/virtualbox/action_provision
+ create mode 100644 .vagrant/machines/web-02/virtualbox/action_set_name
+ create mode 100644 .vagrant/machines/web-02/virtualbox/box_meta
+ create mode 100644 .vagrant/machines/web-02/virtualbox/creator_uid
+ create mode 100644 .vagrant/machines/web-02/virtualbox/disk_meta
+ create mode 100644 .vagrant/machines/web-02/virtualbox/id
+ create mode 100644 .vagrant/machines/web-02/virtualbox/index_uuid
+ create mode 100644 .vagrant/machines/web-02/virtualbox/private_key
+ create mode 100644 .vagrant/machines/web-02/virtualbox/synced_folders
+ create mode 100644 .vagrant/machines/web-02/virtualbox/vagrant_cwd
+ create mode 100644 .vagrant/rgloader/loader.rb
+ create mode 100644 README.md
+ create mode 100644 Vagrantfile
+ create mode 100644 haproxy/haproxy.cfg
+ create mode 100644 histories-final-verification.log
+ create mode 100644 histories-lb01.log
+ create mode 100644 histories-lb02.log
+ create mode 100644 histories-web01.log
+ create mode 100644 histories-web02.log
+ create mode 100644 histories.log
+ create mode 100644 keepalived/lb01.conf
+ create mode 100644 keepalived/lb02.conf
+ create mode 100644 load-balancing.md
+ create mode 100644 react-app/package.json
+ create mode 100644 react-app/public/index.html
+ create mode 100644 react-app/server.js
+ create mode 100644 react-app/src/App.js
+ create mode 100644 react-app/src/index.js
+ create mode 100644 screenshort/VM/VM-off-lb01.png
+ create mode 100644 screenshort/VM/VM-off-lb02-web02.png
+ create mode 100644 screenshort/VM/VM-off-web01.png
+ create mode 100644 screenshort/VM/VM.png
+ create mode 100644 screenshort/ha-proxy/Check backend health in HAProxy.png
+ create mode 100644 screenshort/ha-proxy/after-off-web01-lb02.png
+ create mode 100644 screenshort/ha-proxy/after-off-web01.png
+ create mode 100644 screenshort/ha-proxy/after-update-securePassword.png
+ create mode 100644 screenshort/ha-proxy/backend-test-haproxy.png
+ create mode 100644 screenshort/ha-proxy/refresh-after-off-lb02-web02(new).png
+ create mode 100644 screenshort/ha-proxy/refresh-after-off-lb02-web02.png
+ create mode 100644 screenshort/ha-proxy/refresh-after-off-lb02.png
+ create mode 100644 screenshort/refresh-off-lb02-web02.png
+ create mode 100644 screenshort/refresh-off-lb02.png
+ create mode 100644 screenshort/refresh-off-web01.png
+ create mode 100644 screenshort/refresh-web01.png
+ create mode 100644 screenshort/refresh-web02.png
+ create mode 100644 screenshort/web01-after-off-lb02-web02.png
+ create mode 100644 screenshort/web01-off.png
+ create mode 100644 screenshort/web01.png
+ create mode 100644 screenshort/web02-off.png
+ create mode 100644 screenshort/web02.png
+ create mode 100644 scripts/check-health.sh
+ create mode 100644 scripts/deploy-react.sh
+ create mode 100644 scripts/server-report.sh
+ create mode 100644 scripts/service-manager.sh
+ create mode 100644 scripts/setup-web.sh
+ create mode 100644 setup.md
+ create mode 100644 systemd/react-app.service
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (master)
+$ git branch -m main
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ gh repo create ha-react-homework --private --source=. --remote=origin --push
+✓ Created repository Longfou1900/ha-react-homework on github.com
+  https://github.com/Longfou1900/ha-react-homework
+✓ Added remote https://github.com/Longfou1900/ha-react-homework.git
+Enumerating objects: 95, done.
+Counting objects: 100% (95/95), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (68/68), done.
+Writing objects: 100% (95/95), 3.19 MiB | 22.85 MiB/s, done.
+Total 95 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), done.
+To https://github.com/Longfou1900/ha-react-homework.git
+ * [new branch]      HEAD -> main
+branch 'main' set up to track 'origin/main'.
+✓ Pushed commits to https://github.com/Longfou1900/ha-react-homework.git
