@@ -1,0 +1,24 @@
+[Unit]
+Description=React.js Application served via Node.js/Express
+After=network.target
+
+[Service]
+Type=simple
+#User=ubuntu
+#WorkingDirectory=/home/ubuntu/ha-react-homework/react-app
+User=vagrant
+Group=vagrant
+WorkingDirectory=/home/vagrant/react-app
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+#StandardOutput=syslog
+#StandardError=syslog
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=react-app
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+[Install]
+WantedBy=multi-user.target

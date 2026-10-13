@@ -1,0 +1,392 @@
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl http://192.168.56.100
+curl: (7) Failed to connect to 192.168.56.100 port 80 after 2044 ms: Could not connect to server
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ vagrant ssh lb-01
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Tue Oct 13 10:13:41 AM UTC 2026
+
+  System load:           0.0
+  Usage of /:            14.7% of 30.34GB
+  Memory usage:          44%
+  Swap usage:            1%
+  Processes:             131
+  Users logged in:       0
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+Last login: Tue Oct 13 09:40:16 2026 from 10.0.2.2
+vagrant@lb-01:~$ ip br addr show eth1
+Object "br" is unknown, try "ip help".
+vagrant@lb-01:~$ ip -br addr show eth1
+eth1             UP             192.168.56.10/24 192.168.56.100/32 fe80::a00:27ff:fec4:a22/64 
+vagrant@lb-01:~$ sudo systemctl status haproxy --no-pager -l
+● haproxy.service - HAProxy Load Balancer
+     Loaded: loaded (/usr/lib/systemd/system/haproxy.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-10-13 09:30:42 UTC; 43min ago
+       Docs: man:haproxy(1)
+             file:/usr/share/doc/haproxy/configuration.txt.gz
+   Main PID: 2891 (haproxy)
+     Status: "Ready."
+      Tasks: 2 (limit: 453)
+     Memory: 14.5M (peak: 41.4M swap: 27.7M swap peak: 27.7M)
+        CPU: 333ms
+     CGroup: /system.slice/haproxy.service
+             ├─2891 /usr/sbin/haproxy -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -S /run/haproxy-master.sock
+             └─2893 /usr/sbin/haproxy -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -S /run/haproxy-master.sock
+
+Oct 13 09:30:41 lb-01 systemd[1]: Starting haproxy.service - HAProxy Load Balancer...
+Oct 13 09:30:42 lb-01 haproxy[2891]: [NOTICE]   (2891) : New worker (2893) forked
+Oct 13 09:30:42 lb-01 haproxy[2891]: [NOTICE]   (2891) : Loading success.
+Oct 13 09:30:42 lb-01 systemd[1]: Started haproxy.service - HAProxy Load Balancer.
+vagrant@lb-01:~$ sudo ss -ltnp | grep ':80'
+vagrant@lb-01:~$ curl -v --max-time 5 http://127.0.0.1/
+*   Trying 127.0.0.1:80...
+* connect to 127.0.0.1 port 80 from 127.0.0.1 port 52890 failed: Connection refused
+* Failed to connect to 127.0.0.1 port 80 after 1 ms: Couldn't connect to server
+* Closing connection
+curl: (7) Failed to connect to 127.0.0.1 port 80 after 1 ms: Couldn't connect to server
+vagrant@lb-01:~$ curl -v --max-time 5 http://192.168.56.100/
+*   Trying 192.168.56.100:80...
+* connect to 192.168.56.100 port 80 from 192.168.56.100 port 46874 failed: Connection refused
+* Failed to connect to 192.168.56.100 port 80 after 3 ms: Couldn't connect to server
+* Closing connection
+curl: (7) Failed to connect to 192.168.56.100 port 80 after 3 ms: Couldn't connect to server
+vagrant@lb-01:~$ sudo cat /etc/haproxy/haproxy.cfg
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    retries 3
+    timeout connect 5s
+    timeout client  50s
+    timeout server  50s
+
+frontend react_frontend
+    bind *:80
+    mode http
+    default_backend react_servers
+
+frontend stats_frontend
+    bind *:8404
+    mode http
+    stats enable
+    stats uri /haproxy-stats
+    stats refresh 5s
+    stats auth admin:SecurePassword123!
+    acl management_net src 192.168.56.0/24
+    http-request deny if !management_net
+
+backend react_servers
+    mode http
+    balance roundrobin
+    option httpchk GET /health
+    http-check expect status 200
+    server web01 192.168.56.20:3000 check inter 3s rise 2 fall 3
+    server web02 sudo haproxy -c -f /etc/haproxy/
+[NOTICE]   (4648) : haproxy version is 2.8.16-0ubuntu0.24.04.3
+[NOTICE]   (4648) : path to executable is /usr/sbin/haproxy
+[ALERT]    (4648) : config : parsing [/etc/haproxy//haproxy.cfg:40]: Missing LF on last line, file might have been truncated at position 65.
+[ALERT]    (4648) : config : Error(s) found in configuration file : /etc/haproxy//haproxy.cfg
+[ALERT]    (4648) : config : Fatal errors found in configuration.
+vagrant@lb-01:~$ sudo cat /etc/haproxy/haproxy.cfg
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    retries 3
+    timeout connect 5s
+    timeout client  50s
+    timeout server  50s
+
+frontend react_frontend
+    bind *:80
+    mode http
+    default_backend react_servers
+
+frontend stats_frontend
+    bind *:8404
+    mode http
+    stats enable
+    stats uri /haproxy-stats
+    stats refresh 5s
+    stats auth admin:SecurePassword123!
+    acl management_net src 192.168.56.0/24
+    http-request deny if !management_net
+
+backend react_servers
+    mode http
+    balance roundrobin
+    option httpchk GET /health
+    http-check expect status 200
+    server web01 192.168.56.20:3000 check inter 3s rise 2 fall 3
+    server web02 192.168.56.21:3000 check inter 3s rise 2 fall 3vagrant@lb-01:~$ 
+vagrant@lb-01:~$ sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+[NOTICE]   (4684) : haproxy version is 2.8.16-0ubuntu0.24.04.3
+[NOTICE]   (4684) : path to executable is /usr/sbin/haproxy
+[ALERT]    (4684) : config : parsing [/etc/haproxy/haproxy.cfg:40]: Missing LF on last line, file might have been truncated at position 65.
+[ALERT]    (4684) : config : Error(s) found in configuration file : /etc/haproxy/haproxy.cfg
+[ALERT]    (4684) : config : Fatal errors found in configuration.
+vagrant@lb-01:~$ sudo ss -ltnp
+State           Recv-Q          Send-Q                   Local Address:Port                   Peer Address:Port          Process                                                          
+LISTEN          0               4096                        127.0.0.54:53                          0.0.0.0:*              users:(("systemd-resolve",pid=535,fd=17))                       
+LISTEN          0               4096                           0.0.0.0:22                          0.0.0.0:*              users:(("sshd",pid=989,fd=3),("systemd",pid=1,fd=198))          
+LISTEN          0               4096                     127.0.0.53%lo:53                          0.0.0.0:*              users:(("systemd-resolve",pid=535,fd=15))                       
+LISTEN          0               4096                              [::]:22                             [::]:*              users:(("sshd",pid=989,fd=4),("systemd",pid=1,fd=199))          
+vagrant@lb-01:~$ sudo nano /etc/haproxy/haproxy.cfg
+vagrant@lb-01:~$ sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+Configuration file is valid
+vagrant@lb-01:~$ sudo systemctl restart haproxy
+sudo systemctl status haproxy --no-pager -l
+● haproxy.service - HAProxy Load Balancer
+     Loaded: loaded (/usr/lib/systemd/system/haproxy.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-10-13 10:19:31 UTC; 89ms ago
+       Docs: man:haproxy(1)
+             file:/usr/share/doc/haproxy/configuration.txt.gz
+   Main PID: 4773 (haproxy)
+     Status: "Ready."
+      Tasks: 2 (limit: 453)
+     Memory: 37.8M (peak: 37.9M)
+        CPU: 219ms
+     CGroup: /system.slice/haproxy.service
+             ├─4773 /usr/sbin/haproxy -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -S /run/haproxy-master.sock
+             └─4777 /usr/sbin/haproxy -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -S /run/haproxy-master.sock
+
+Oct 13 10:19:31 lb-01 systemd[1]: Starting haproxy.service - HAProxy Load Balancer...
+Oct 13 10:19:31 lb-01 haproxy[4773]: [NOTICE]   (4773) : New worker (4777) forked
+Oct 13 10:19:31 lb-01 systemd[1]: Started haproxy.service - HAProxy Load Balancer.
+Oct 13 10:19:31 lb-01 haproxy[4773]: [NOTICE]   (4773) : Loading success.
+vagrant@lb-01:~$ sudo ss -ltnp | grep ':80'
+LISTEN 0      4096         0.0.0.0:80        0.0.0.0:*    users:(("haproxy",pid=4777,fd=9))                     
+vagrant@lb-01:~$ curl -v --max-time 5 http://192.168.56.100/
+*   Trying 192.168.56.100:80...
+* Connected to 192.168.56.100 (192.168.56.100) port 80
+> GET / HTTP/1.1
+> Host: 192.168.56.100
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< x-powered-by: Express
+< accept-ranges: bytes
+< cache-control: public, max-age=0
+< last-modified: Tue, 13 Oct 2026 08:06:59 GMT
+< etag: W/"1b1-1a1344ceda6"
+< content-type: text/html; charset=UTF-8
+< content-length: 433
+< date: Tue, 13 Oct 2026 10:20:33 GMT
+< keep-alive: timeout=5
+< 
+* Connection #0 to host 192.168.56.100 left intact
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="React application"/><title>HA React App</title><script defer="defer" src="/static/js/main.af8b8526.js"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>vagrant@lb-01:~$ 
+vagrant@lb-01:~$ exit
+logout
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -v --max-time 5 http://192.168.56.100/
+*   Trying 192.168.56.100:80...
+* Established connection to 192.168.56.100 (192.168.56.100 port 80) from 192.168.56.1 port 60566 
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: 192.168.56.100
+> User-Agent: curl/8.17.0
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< x-powered-by: Express
+< accept-ranges: bytes
+< cache-control: public, max-age=0
+< last-modified: Tue, 13 Oct 2026 09:01:39 GMT
+< etag: W/"1b1-1a1347efb48"
+< content-type: text/html; charset=UTF-8
+< content-length: 433
+< date: Tue, 13 Oct 2026 10:21:00 GMT
+< keep-alive: timeout=5
+< 
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="React application"/><title>HA React App</title><script defer="defer" src="/static/js/main.af8b8526.js"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>* Connection #0 to host 192.168.56.100:80 left intact
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-01"}
+
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ vagrant ssh lb-01
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Tue Oct 13 10:30:20 AM UTC 2026
+
+  System load:           0.07
+  Usage of /:            14.7% of 30.34GB
+  Memory usage:          51%
+  Swap usage:            0%
+  Processes:             134
+  Users logged in:       0
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+Last login: Tue Oct 13 10:13:42 2026 from 10.0.2.2
+vagrant@lb-01:~$ sudo nano /etc/haproxy/haproxy.cfg
+vagrant@lb-01:~$ sudo -c -f /etc/haproxy/haproxy.cfg 
+usage: sudo -h | -K | -k | -V
+usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
+usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
+            [-u user] [command [arg ...]]
+usage: sudo [-ABbEHkNnPS] [-r role] [-t type] [-C num] [-D directory]
+            [-g group] [-h host] [-p prompt] [-R directory] [-T timeout]
+            [-u user] [VAR=value] [-i | -s] [command [arg ...]]
+usage: sudo -e [-ABkNnS] [-r role] [-t type] [-C num] [-D directory]
+            [-g group] [-h host] [-p prompt] [-R directory] [-T timeout]
+            [-u user] file ...
+vagrant@lb-01:~$ sudo systemctl restart haproxy
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ vagrant ssh lb-01
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Tue Oct 13 10:30:20 AM UTC 2026
+
+  System load:           0.07
+  Usage of /:            14.7% of 30.34GB
+  Memory usage:          51%
+  Swap usage:            0%
+  Processes:             134
+  Users logged in:       0
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+Last login: Tue Oct 13 10:13:42 2026 from 10.0.2.2
+vagrant@lb-01:~$ sudo nano /etc/haproxy/haproxy.cfg
+vagrant@lb-01:~$ sudo -c -f /etc/haproxy/haproxy.cfg 
+usage: sudo -h | -K | -k | -V
+usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
+usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
+            [-u user] [command [arg ...]]
+usage: sudo [-ABbEHkNnPS] [-r role] [-t type] [-C num] [-D directory]
+            [-g group] [-h host] [-p prompt] [-R directory] [-T timeout]
+            [-u user] [VAR=value] [-i | -s] [command [arg ...]]
+usage: sudo -e [-ABkNnS] [-r role] [-t type] [-C num] [-D directory]
+            [-g group] [-h host] [-p prompt] [-R directory] [-T timeout]
+            [-u user] file ...
+vagrant@lb-01:~$ sudo systemctl restart haproxy
+vagrant@lb-01:~$ ^C
+vagrant@lb-01:~$ 
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-01"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ Connection to 127.0.0.1 closed by remote host.
+tcsetattr: Input/output error
+Connection to 127.0.0.1 closed by remote host.
+tcsetattr: Input/output error
+
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ vagrant status
+Current machine states:
+
+lb-01                     running (virtualbox)
+lb-02                     running (virtualbox)
+web-01                    poweroff (virtualbox)
+web-02                    running (virtualbox)
+
+This environment represents multiple VMs. The VMs are all listed
+above with their current state. For more information about a specific
+VM, run `vagrant status NAME`.
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-02"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ 
+
+#after 
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-02"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-02"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-01"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-02"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-02"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-01"}
+
+#after 
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+<html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-01"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-01"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ curl -s http://192.168.56.100/health
+{"status":"UP","server":"WEB-01"}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab
+$ 
