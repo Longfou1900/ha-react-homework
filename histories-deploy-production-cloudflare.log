@@ -1,0 +1,408 @@
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        screenshort/refresh-loading.....png
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ ls -la
+total 314
+drwxr-xr-x 1 USER 197121     0 Oct 14 00:34 ./
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:44 ../
+drwxr-xr-x 1 USER 197121     0 Oct 14 13:38 .git/
+-rw-r--r-- 1 USER 197121   236 Oct 13 23:50 .gitignore
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:56 .vagrant/
+-rw-r--r-- 1 USER 197121  8253 Oct 13 18:39 git-commands.txt
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:51 haproxy/
+-rw-r--r-- 1 USER 197121  8532 Oct 13 11:23 histories.log
+-rw-r--r-- 1 USER 197121 16761 Oct 13 18:13 histories-final-verification.log
+-rw-r--r-- 1 USER 197121 28240 Oct 13 17:04 histories-lb01.log
+-rw-r--r-- 1 USER 197121 26599 Oct 13 17:12 histories-lb02.log
+-rw-r--r-- 1 USER 197121  5855 Oct 13 23:41 histories-react-app.log
+-rw-r--r-- 1 USER 197121 86653 Oct 13 15:35 histories-web01.log
+-rw-r--r-- 1 USER 197121 53003 Oct 13 16:15 histories-web02.log
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:52 keepalived/
+-rw-r--r-- 1 USER 197121  4177 Oct 13 18:34 load-balancing.md
+drwxr-xr-x 1 USER 197121     0 Oct 13 23:23 react-app/
+-rw-r--r-- 1 USER 197121   769 Oct 13 10:56 README.md
+drwxr-xr-x 1 USER 197121     0 Oct 14 10:32 screenshort/
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:55 scripts/
+-rw-r--r-- 1 USER 197121  4280 Oct 14 00:07 setup.md
+-rw-r--r-- 1 USER 197121    98 Oct 13 23:36 setup_react-app.md
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:50 systemd/
+-rw-r--r-- 1 USER 197121  1284 Oct 13 11:03 Vagrantfile
+-rw-r--r-- 1 USER 197121  2698 Oct 14 00:49 web01.log
+-rw-r--r-- 1 USER 197121  1140 Oct 14 00:37 web02.log
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ ls -la react-app
+total 933
+drwxr-xr-x 1 USER 197121      0 Oct 13 23:23 ./
+drwxr-xr-x 1 USER 197121      0 Oct 14 00:34 ../
+drwxr-xr-x 1 USER 197121      0 Oct 13 23:44 build/
+drwxr-xr-x 1 USER 197121      0 Oct 13 23:23 node_modules/
+-rw-r--r-- 1 USER 197121    579 Oct 13 10:48 package.json
+-rw-r--r-- 1 USER 197121 673156 Oct 13 23:19 package-lock.json
+drwxr-xr-x 1 USER 197121      0 Oct 13 14:49 public/
+-rw-r--r-- 1 USER 197121    893 Oct 13 10:49 server.js
+drwxr-xr-x 1 USER 197121      0 Oct 13 23:04 src/
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ cat react-app/package.json 
+{
+  "name": "ha-react-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.19.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "serve": "node server.js"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ git remote -v
+origin  https://github.com/Longfou1900/ha-react-homework.git (fetch)
+origin  https://github.com/Longfou1900/ha-react-homework.git (push)
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ 
+cd /d/ISTAD/devOps-lab
+
+git ls-files react-app/src/App.js
+git log -1 --oneline
+react-app/src/App.js
+be96b17 (HEAD -> main, origin/main) wip: update title web pages direct their names
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ cd /d/ISTAD/devOps-lab
+
+grep -n -E 'api/info|api/health|fetch\(|axios|LOADING|setServer' react-app/src/App.js
+
+cat react-app/server.js
+4:  const [serverInfo, setServerInfo] = useState({ server: 'LOADING...', timestamp: '' });
+9:    fetch('/api/info')
+12:        setServerInfo(data);
+27:    if (serverInfo.server && serverInfo.server !== 'LOADING...') {
+const express = require('express');
+const path = require('path');
+const os = require('os');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const SERVER_NAME = process.env.SERVER_NAME || os.hostname().toUpperCase();
+
+// Serve static files from React build directory
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Health check endpoint returning HTTP 200
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'UP', server: SERVER_NAME });
+});
+
+// API endpoint to return server identifier for dynamic UI
+app.get('/api/info', (req, res) => {
+  res.json({ server: SERVER_NAME, timestamp: new Date().toISOString() });
+});
+
+// SPA fallback
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server [${SERVER_NAME}] running on port ${PORT}`);
+});
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ cd /d/ISTAD/devOps-lab/react-app
+
+ls -la
+
+find . -maxdepth 2 \( -iname '*wrangler*' -o -iname 'worker.js' -o -iname 'worker.ts' \) -print
+total 933
+drwxr-xr-x 1 USER 197121      0 Oct 13 23:23 ./
+drwxr-xr-x 1 USER 197121      0 Oct 14 00:34 ../
+drwxr-xr-x 1 USER 197121      0 Oct 13 23:44 build/
+drwxr-xr-x 1 USER 197121      0 Oct 13 23:23 node_modules/
+-rw-r--r-- 1 USER 197121    579 Oct 13 10:48 package.json
+-rw-r--r-- 1 USER 197121 673156 Oct 13 23:19 package-lock.json
+drwxr-xr-x 1 USER 197121      0 Oct 13 14:49 public/
+-rw-r--r-- 1 USER 197121    893 Oct 13 10:49 server.js
+drwxr-xr-x 1 USER 197121      0 Oct 13 23:04 src/
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab/react-app (main)
+$ cd /d/ISTAD/devOps-lab
+
+ls -la
+
+git status --short
+
+find . -maxdepth 3 \( -iname 'wrangler.json' -o -iname 'wrangler.jsonc' -o -iname 'wrangler.toml' -o -iname '_worker.js' \) -print
+total 314
+drwxr-xr-x 1 USER 197121     0 Oct 14 00:34 ./
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:44 ../
+drwxr-xr-x 1 USER 197121     0 Oct 14 13:38 .git/
+-rw-r--r-- 1 USER 197121   236 Oct 13 23:50 .gitignore
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:56 .vagrant/
+-rw-r--r-- 1 USER 197121  8253 Oct 13 18:39 git-commands.txt
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:51 haproxy/
+-rw-r--r-- 1 USER 197121  8532 Oct 13 11:23 histories.log
+-rw-r--r-- 1 USER 197121 16761 Oct 13 18:13 histories-final-verification.log
+-rw-r--r-- 1 USER 197121 28240 Oct 13 17:04 histories-lb01.log
+-rw-r--r-- 1 USER 197121 26599 Oct 13 17:12 histories-lb02.log
+-rw-r--r-- 1 USER 197121  5855 Oct 13 23:41 histories-react-app.log
+-rw-r--r-- 1 USER 197121 86653 Oct 13 15:35 histories-web01.log
+-rw-r--r-- 1 USER 197121 53003 Oct 13 16:15 histories-web02.log
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:52 keepalived/
+-rw-r--r-- 1 USER 197121  4177 Oct 13 18:34 load-balancing.md
+drwxr-xr-x 1 USER 197121     0 Oct 13 23:23 react-app/
+-rw-r--r-- 1 USER 197121   769 Oct 13 10:56 README.md
+drwxr-xr-x 1 USER 197121     0 Oct 14 10:32 screenshort/
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:55 scripts/
+-rw-r--r-- 1 USER 197121  4280 Oct 14 00:07 setup.md
+-rw-r--r-- 1 USER 197121    98 Oct 13 23:36 setup_react-app.md
+drwxr-xr-x 1 USER 197121     0 Oct 13 10:50 systemd/
+-rw-r--r-- 1 USER 197121  1284 Oct 13 11:03 Vagrantfile
+-rw-r--r-- 1 USER 197121  2698 Oct 14 00:49 web01.log
+-rw-r--r-- 1 USER 197121  1140 Oct 14 00:37 web02.log
+?? screenshort/refresh-loading.....png
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ cd /d/ISTAD/devOps-lab
+
+npx wrangler --version
+Need to install the following packages:
+wrangler@4.151.0
+Ok to proceed? (y) y
+
+ ⛅️ wrangler 4.151.0
+────────────────────
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab (main)
+$ cd /d/ISTAD/devOps-lab/react-app
+
+cat > wrangler.jsonc <<'EOF'
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ha-react-homework",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-14",
+  "assets": {
+    "directory": "./build",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/health"]
+  }
+}
+EOF
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab/react-app (main)
+$ cat > worker.js <<'EOF'
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/api/info") {
+      const server =
+        Math.floor(Date.now() / 1000) % 2 === 0
+          ? "WEB-01"
+          : "WEB-02";
+
+      return Response.json({
+        server,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    if (url.pathname === "/health") {
+      return Response.json({
+        status: "UP",
+        server: "CLOUDFLARE-WORKER"
+      });
+    }
+
+    return env.ASSETS.fetch(request);
+  }
+};
+EOF
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab/react-app (main)
+$ npx wrangler --version
+
+cat wrangler.jsonc
+
+cat worker.js
+
+git status --short
+
+ ⛅️ wrangler 4.151.0
+────────────────────
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ha-react-homework",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-14",
+  "assets": {
+    "directory": "./build",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/health"]
+  }
+}
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/api/info") {
+      const server =
+        Math.floor(Date.now() / 1000) % 2 === 0
+          ? "WEB-01"
+          : "WEB-02";
+
+      return Response.json({
+        server,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    if (url.pathname === "/health") {
+      return Response.json({
+        status: "UP",
+        server: "CLOUDFLARE-WORKER"
+      });
+    }
+
+    return env.ASSETS.fetch(request);
+  }
+};
+?? worker.js
+?? wrangler.jsonc
+?? ../screenshort/refresh-loading.....png
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab/react-app (main)
+$ cd /d/ISTAD/devOps-lab/react-app
+npx wrangler deploy
+
+ ⛅️ wrangler 4.151.0
+────────────────────
+Attempting to login via OAuth...
+Opening a link in your default browser: https://dash.cloudflare.com/oauth2/auth?response_type=code&client_id=54d11594-84e4-41aa-b438-e81b8fa78ee7&redirect_uri=http%3A%2F%2Flocalhost%3A8976%2Foauth%2Fcallback&scope=k2.read%20k2.write%20account%3Aread%20user%3Aread%20workers%3Awrite%20workers_kv%3Awrite%20workers_routes%3Awrite%20workers_scripts%3Awrite%20workers_tail%3Aread%20d1%3Awrite%20pages%3Awrite%20zone%3Aread%20ssl_certs%3Awrite%20ai%3Awrite%20ai-search%3Awrite%20ai-search%3Arun%20agent-memory%3Awrite%20queues%3Awrite%20pipelines%3Awrite%20secrets_store%3Awrite%20artifacts%3Awrite%20flagship%3Awrite%20containers%3Awrite%20cloudchamber%3Awrite%20connectivity%3Aadmin%20email_routing%3Awrite%20email_sending%3Awrite%20browser%3Awrite%20challenge-widgets.write%20offline_access&state=9-wsRH7F3NU~OTtS01s4.SXiqmitAYDj&code_challenge=6_Mdts2enhHLvcQSIJYjIvcn_vzGiCJu8VPcihbN8uY&code_challenge_method=S256
+
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+
+X [ERROR] Timed out waiting for authorization code, please try again.
+
+
+🪵  Logs were written to "C:\Users\USER\AppData\Roaming\xdg.config\.wrangler\logs\wrangler-2026-10-14_07-31-30_517.log"
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab/react-app (main)
+$ cd /d/ISTAD/devOps-lab/react-app
+npx wrangler login
+
+ ⛅️ wrangler 4.151.0
+────────────────────
+Attempting to login via OAuth...
+Opening a link in your default browser: https://dash.cloudflare.com/oauth2/auth?response_type=code&client_id=54d11594-84e4-41aa-b438-e81b8fa78ee7&redirect_uri=http%3A%2F%2Flocalhost%3A8976%2Foauth%2Fcallback&scope=k2.read%20k2.write%20account%3Aread%20user%3Aread%20workers%3Awrite%20workers_kv%3Awrite%20workers_routes%3Awrite%20workers_scripts%3Awrite%20workers_tail%3Aread%20d1%3Awrite%20pages%3Awrite%20zone%3Aread%20ssl_certs%3Awrite%20ai%3Awrite%20ai-search%3Awrite%20ai-search%3Arun%20agent-memory%3Awrite%20queues%3Awrite%20pipelines%3Awrite%20secrets_store%3Awrite%20artifacts%3Awrite%20flagship%3Awrite%20containers%3Awrite%20cloudchamber%3Awrite%20connectivity%3Aadmin%20email_routing%3Awrite%20email_sending%3Awrite%20browser%3Awrite%20challenge-widgets.write%20offline_access&state=EbqpearBxoDbTFcQ1e7cMO52Oz-e19aa&code_challenge=rD6n74uU5nhfB7gVhZfhreUx6InzRAKziD117S42MHo&code_challenge_method=S256
+Successfully logged in.
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab/react-app (main)
+$ npx wrangler whoami
+
+ ⛅️ wrangler 4.151.0
+────────────────────
+Getting User settings...
+👋 You are logged in with an OAuth Token, associated with the email nunorton22@gmail.com.
+🔐 Credentials are stored in: C:\Users\USER\AppData\Roaming\xdg.config\.wrangler\config\default.toml
+┌────────────────────────────────┬──────────────────────────────────┐
+│ Account Name                   │ Account ID                       │
+├────────────────────────────────┼──────────────────────────────────┤
+│ Nunorton22@gmail.com's Account │ d625fa4f09e9fa1836891fb4782e5476 │
+└────────────────────────────────┴──────────────────────────────────┘
+🔓 Token Permissions:
+Scope (Access)
+- user (read)
+- offline_access 
+- k2.read 
+- k2.write 
+- account (read)
+- workers (write)
+- workers_kv (write)
+- workers_routes (write)
+- workers_scripts (write)
+- workers_tail (read)
+- d1 (write)
+- pages (write)
+- zone (read)
+- ssl_certs (write)
+- ai (write)
+- ai-search (write)
+- ai-search (run)
+- agent-memory (write)
+- queues (write)
+- pipelines (write)
+- secrets_store (write)
+- artifacts (write)
+- flagship (write)
+- containers (write)
+- cloudchamber (write)
+- connectivity (admin)
+- email_routing (write)
+- email_sending (write)
+- browser (write)
+- challenge-widgets.write 
+
+USER@DESKTOP-M1TVSAR MINGW64 /d/ISTAD/devOps-lab/react-app (main)
+$ npx wrangler deploy
+
+ ⛅️ wrangler 4.151.0
+────────────────────
+🌀 Building list of assets...
+✨ Read 7 files from the assets directory D:\ISTAD\devOps-lab\react-app\build
+🌀 Starting asset upload...
+🌀 Found 4 new or modified static assets to upload. Proceeding with upload...
++ /asset-manifest.json
++ /static/js/main.ad45c546.js.map
++ /index.html
++ /static/js/main.ad45c546.js
+Uploaded 1 of 4 assets
+Uploaded 3 of 4 assets
+Uploaded 4 of 4 assets
+✨ Success! Uploaded 4 files (1 already uploaded) (6.61 sec)
+
+Total Upload: 0.60 KiB / gzip: 0.35 KiB
+Worker Startup Time: 3 ms
+Your Worker has access to the following bindings:
+Binding            Resource      
+env.ASSETS         Assets        
+
+Uploaded ha-react-homework (12.54 sec)
+▲ [WARNING] Because your 'workers.dev' route is enabled and your 'preview_urls' setting is not in your Wrangler config file, Preview URLs will be enabled for this deployment by default.
+
+  To override this setting, you can disable Preview URLs by explicitly setting 'preview_urls =
+  false' in your Wrangler config file.
+
+
+Deployed ha-react-homework triggers (1.63 sec)
+  https://ha-react-homework.nunorton22.workers.dev
+Current Version ID: ca4c8783-1131-4a4e-aa73-91a762f471e6

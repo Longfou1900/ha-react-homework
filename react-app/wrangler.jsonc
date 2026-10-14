@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ha-react-homework",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-14",
+  "assets": {
+    "directory": "./build",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/health"]
+  }
+}
